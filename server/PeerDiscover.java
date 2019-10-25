@@ -46,7 +46,6 @@ public class PeerDiscover implements Runnable {
   }
 
   public void send(final UDPPacket pkt) {
-    System.out.println("1");
     send = new Thread("send_thread") {
       public void run() {
         DatagramPacket dgpacket = new DatagramPacket(pkt.getData(), pkt.getData().length,
@@ -115,9 +114,9 @@ public class PeerDiscover implements Runnable {
 
       if (recvMsg.getType() == MSG_TYPE.PO) {
         // it is neighbor
-        System.out.println("recieved "+ recvMsg.toString());
+        System.out.println("received "+ recvMsg.toString());
       } else if (recvMsg.getType() == MSG_TYPE.PI) {
-        System.out.println("recieved "+ recvMsg.toString());
+        System.out.println("received "+ recvMsg.toString());
         UDPPacket readSend = new UDPPacket(recvMsg.toString().getBytes());
         // if not in the visited, return ack and broadcast to neighbor
         if (!server.visited.contains(pkt.getAddress())) {

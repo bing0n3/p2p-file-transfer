@@ -1,3 +1,5 @@
+package Utils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,7 +14,7 @@ public class PortManage {
   private ArrayList<Integer> ports;
 
 
-  PortManage() {
+  public PortManage() {
     ports = new ArrayList<>();
 
     File file = new File("config_peer.txt");
