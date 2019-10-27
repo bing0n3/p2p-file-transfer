@@ -7,13 +7,13 @@ import java.net.InetAddress;
 import packet.DiscoverMsg;
 import packet.DiscoverMsg.MSG_TYPE;
 import packet.UDPPacket;
-import server.PeerDiscover;
+import server.UDPServer;
 
 public class p2p {
 
   public static void main(String[] args) {
     PortManage portManage = new PortManage();
-    PeerDiscover udpServer = new PeerDiscover(portManage.getUdpPort());
+    UDPServer udpServer = new UDPServer(portManage.getUdpPort());
     udpServer.recieve();
     int udpPort = portManage.getUdpPort();
     try {
@@ -23,7 +23,6 @@ public class p2p {
     }
     Command commands = new Command(portManage, udpServer);
 //    udpServer.send();
-
 
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
@@ -40,10 +39,10 @@ public class p2p {
 
   public static class Command {
 
-    private PeerDiscover discover;
+    private UDPServer discover;
     private PortManage portManage;
 
-    public Command(PortManage portManage, PeerDiscover discover) {
+    public Command(PortManage portManage, UDPServer discover) {
       this.discover = discover;
       this.portManage = portManage;
     }
@@ -67,17 +66,19 @@ public class p2p {
           System.exit(0);
       }
     }
-    void UDPSend(String ip)  throws IOException {
+
+    void UDPSend(String ip) throws IOException {
       String hostname = HostName.get();
       InetAddress v = InetAddress.getByName(hostname);
       System.out.println(hostname);
       System.out.println(v.getHostAddress());
-      DiscoverMsg msg = new DiscoverMsg(MSG_TYPE.PI, v.getHostAddress(), this.portManage.getUdpPort());
-      UDPPacket here = new UDPPacket(msg.toString().getBytes(),InetAddress.getByName(ip), portManage.getUdpPort());
+      DiscoverMsg msg = new DiscoverMsg(MSG_TYPE.PI, v.getHostAddress(),
+          this.portManage.getUdpPort());
+      UDPPacket here = new UDPPacket(msg.toString().getBytes(), InetAddress.getByName(ip),
+          portManage.getUdpPort());
       discover.send(here);
     }
   }
-
 
 
 }

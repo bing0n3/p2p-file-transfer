@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -14,7 +13,7 @@ import packet.DiscoverMsg;
 import packet.DiscoverMsg.MSG_TYPE;
 import packet.UDPPacket;
 
-public class PeerDiscover implements Runnable {
+public class UDPServer implements Runnable {
 
   private int port;
   private DatagramSocket socket;
@@ -28,7 +27,7 @@ public class PeerDiscover implements Runnable {
   public final Set<InetAddress> visited = new HashSet<>();
 
 
-  public PeerDiscover(int port) {
+  public UDPServer(int port) {
     this.filter = new Vector<>();
     this.port = port;
     try {
@@ -64,7 +63,7 @@ public class PeerDiscover implements Runnable {
   // broadcast packet to other connected
   public void broadcast(byte[] data) {
 //    for(Connection c : CLIENTS) {
-//      this.send(new UDPPacket(data, c.getAddress(), c.getPort()));
+//      this.send(new UDPPacket(packet, c.getAddress(), c.getPort()));
 //    }
   }
 
@@ -81,14 +80,15 @@ public class PeerDiscover implements Runnable {
 
   public void close() {
     this.running = false;
+    this.socket.close();
   }
 
 
   static class RecieveHandler implements Runnable {
 
-    public PeerDiscover server;
+    public UDPServer server;
 
-    RecieveHandler(PeerDiscover server) {
+    RecieveHandler(UDPServer server) {
       this.server = server;
     }
 
@@ -114,9 +114,9 @@ public class PeerDiscover implements Runnable {
 
       if (recvMsg.getType() == MSG_TYPE.PO) {
         // it is neighbor
-        System.out.println("received "+ recvMsg.toString());
+        System.out.println("received " + recvMsg.toString());
       } else if (recvMsg.getType() == MSG_TYPE.PI) {
-        System.out.println("received "+ recvMsg.toString());
+        System.out.println("received " + recvMsg.toString());
         UDPPacket readSend = new UDPPacket(recvMsg.toString().getBytes());
         // if not in the visited, return ack and broadcast to neighbor
         if (!server.visited.contains(pkt.getAddress())) {

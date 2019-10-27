@@ -3,14 +3,15 @@ package packet;
 import java.net.InetAddress;
 
 public class UDPPacket {
+
   private byte[] data;
   private InetAddress ip;
   private int port;
 
   /**
    * Create a new packet
-   * @param data The data to send
-   * @param reciever The packets' reciever
+   *
+   * @param data The packet to send
    */
   public UDPPacket(byte[] data) {
     this.data = data;
@@ -18,6 +19,7 @@ public class UDPPacket {
 
   /**
    * Create a new packet with simple information about the client
+   *
    * @param data
    * @param ip
    * @param port
@@ -30,8 +32,9 @@ public class UDPPacket {
   }
 
   /**
-   * Get the packet data
-   * @return the packet data
+   * Get the packet packet
+   *
+   * @return the packet packet
    */
   public byte[] getData() {
     return data;
@@ -39,6 +42,7 @@ public class UDPPacket {
 
   /**
    * Get the ip
+   *
    * @return the address of the receiver
    */
   public InetAddress getAddr() {
@@ -47,6 +51,7 @@ public class UDPPacket {
 
   /**
    * Get the port
+   *
    * @return the receivers port
    */
   public int getPort() {
