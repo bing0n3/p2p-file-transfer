@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -73,7 +74,9 @@ public class TCPServer implements Runnable {
   }
 
   public void connect(InetAddress host, int port) throws IOException {
-    Socket socket = new Socket(host, port);
+    Socket socket = new Socket();
+    socket.bind(this.welcomeServer.getLocalSocketAddress());
+    socket.connect(new InetSocketAddress(host, port));
     TCPSocketHandler handler = new TCPSocketHandler(socket);
     clients.add(handler);
     handler.send("test");
