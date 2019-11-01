@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TCPServer implements Runnable {
@@ -17,19 +19,17 @@ public class TCPServer implements Runnable {
   private boolean running;
 
   private Set<String> filter;
-  private Thread send, recieve, process;
+  private Thread recieve, process;
 
-  private ArrayList<TCPSocketHandler> servers;
-  private ArrayList<TCPSocketHandler> clients;
-  // sockets manage
-//  private ArrayList<Socket> sockets;
+  private List<TCPSocketHandler> servers;
+  private List<TCPSocketHandler> clients;
 
   public TCPServer(int port) {
 
     filter = new HashSet<>();
     this.port = port;
-    this.servers = new ArrayList<>();
-    this.clients = new ArrayList<>();
+    this.servers = Collections.synchronizedList(new ArrayList<TCPSocketHandler>());
+    this.clients = Collections.synchronizedList(new ArrayList<TCPSocketHandler>());
 
     try {
       this.init();
@@ -43,15 +43,15 @@ public class TCPServer implements Runnable {
 
   private void init() throws IOException {
     this.welcomeServer = new ServerSocket(this.port);
-    this.process = new Thread(this, "server_process");
+    this.process = new Thread(this, "tcp_server_process");
     process.start();
   }
 
   /*
-  listen incoming data
+  listen incoming model
    */
   private void listen() {
-    recieve = new Thread() {
+    recieve = new Thread("tcp_listen") {
       @Override
       public void run() {
         while (running) {
@@ -70,7 +70,7 @@ public class TCPServer implements Runnable {
 
 
   public void close() {
-
+    
   }
 
   public void connect(InetAddress host, int port) throws IOException {
@@ -79,7 +79,7 @@ public class TCPServer implements Runnable {
     TCPSocketHandler handler = new TCPSocketHandler(socket);
     clients.add(handler);
     handler.send("test");
-    System.out.println("Connect with" + host.getHostName() + port);
+    System.out.println("Connect with " + host.getHostAddress() + ":" + port);
   }
 
   @Override

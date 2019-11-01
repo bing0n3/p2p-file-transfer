@@ -1,11 +1,6 @@
 package server;
 
-import Handler.PeersController;
 import Utils.Config;
-import data.DiscoverMsg;
-import data.DiscoverMsg.MSG_TYPE;
-import data.Peer;
-import data.UDPPacket;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,6 +9,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+import model.DiscoverMsg;
+import model.DiscoverMsg.MSG_TYPE;
+import model.Peer;
+import model.Peers;
+import model.UDPPacket;
 
 public class UDPServer implements Runnable {
 
@@ -36,12 +36,12 @@ public class UDPServer implements Runnable {
 
   public void init() throws SocketException {
     this.socket = new DatagramSocket(Config.getUdpPort());
-    process = new Thread(this, "server_process");
+    process = new Thread(this, "udp_server_process");
     process.start();
   }
 
   public void send(final UDPPacket pkt) {
-    send = new Thread("send_thread") {
+    send = new Thread("udp_send_thread") {
       public void run() {
         DatagramPacket dgpacket = new DatagramPacket(pkt.getData(), pkt.getData().length,
             pkt.getAddr(), pkt.getPort());
@@ -60,9 +60,9 @@ public class UDPServer implements Runnable {
   }
 
 
-  // broadcast data to other connected
+  // broadcast model to other connected
   public void broadcast(DiscoverMsg msg) throws UnknownHostException {
-    for (Peer peer : PeersController.getUDPPeers()) {
+    for (Peer peer : Peers.getUDPPeers()) {
       this.broadcast(peer, msg);
     }
   }
@@ -74,7 +74,7 @@ public class UDPServer implements Runnable {
   }
 
   public void listen() {
-    receive = new Thread(new RecieveHandler(this), "receive_thread");
+    receive = new Thread(new RecieveHandler(this), "tcp_receive_thread");
     receive.start();
     System.out.println("Start to Listen incoming UDP message");
   }
@@ -130,21 +130,21 @@ public class UDPServer implements Runnable {
         // the message type is po, add it to the peers list
 
         // if already in, set controlPort
-        if (PeersController.Contains(recvMsg.getIP())) {
-          PeersController.getPeer(recvMsg.getIP()).setControlPort(recvMsg.getPort());
+        if (Peers.Contains(recvMsg.getIP())) {
+          Peers.getPeer(recvMsg.getIP()).setControlPort(recvMsg.getPort());
         } else {
           // if not, add to peers
           // peer without udp port
           InetAddress recvIP = InetAddress.getByName(recvMsg.getIP());
-          PeersController
+          Peers
               .addPeer(recvIP, pkt.getPort(), recvMsg.getPort());
         }
       } else if (recvMsg.getType().equals(MSG_TYPE.PI)) {
         // if not in the visited and not from itself, return ack and broadcast to neighbor
-        if (!PeersController.Contains(recvMsg.getIP())) {
+        if (!Peers.Contains(recvMsg.getIP())) {
           server.broadcast(recvMsg);
           // add peer into
-          PeersController.addPeer(InetAddress.getByName(recvMsg.getIP()), recvMsg.getPort());
+          Peers.addPeer(InetAddress.getByName(recvMsg.getIP()), recvMsg.getPort());
           // create pong message return back to server
           DiscoverMsg pong = new DiscoverMsg(MSG_TYPE.PO, Config.getLocalAddress().getHostAddress(),
               Config.getControlPort());

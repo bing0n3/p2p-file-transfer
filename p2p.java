@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 
 public class p2p {
 
+  private static boolean running;
+
   public static void main(String[] args) {
 
     Config.loadPortManage();
@@ -18,7 +20,7 @@ public class p2p {
     Command commands = new Command(p2pHandler);
 
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    while (true) {
+    while (running) {
       System.out.print("p2p> ");
       try {
         String line = input.readLine();
@@ -47,9 +49,12 @@ public class p2p {
         case "connect":
           Connect(params[1], params[2]);
           break;
+        case "help":
+
+          break;
         case "exit":
+          p2p.running = false;
           this.p2pHandler.Close();
-          System.exit(0);
       }
     }
 

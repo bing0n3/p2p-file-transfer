@@ -26,6 +26,7 @@ public class TCPSocketHandler implements Runnable {
     this.remotePort = socket.getPort();
     process = new Thread(this);
     process.start();
+    System.out.println("Connect with " + remoteIP.getHostAddress() + ":" + remotePort);
     this.listening();
   }
 

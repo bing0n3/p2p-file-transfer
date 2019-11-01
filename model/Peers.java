@@ -1,15 +1,14 @@
-package Handler;
+package model;
 
-import data.Peer;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PeersController {
+public class Peers {
 
-  private static Map<String, Peer> peers = Collections
+  private static Map<String, model.Peer> peers = Collections
       .synchronizedMap(new HashMap<String, Peer>());
 
   public static void addPeer(InetAddress ip, int port) {
