@@ -1,28 +1,21 @@
-import Utils.HostName;
-import Utils.PortManage;
+import Handler.P2PHandler;
+import Utils.Config;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import packet.DiscoverMsg;
-import packet.DiscoverMsg.MSG_TYPE;
-import packet.UDPPacket;
-import server.UDPServer;
 
 public class p2p {
 
   public static void main(String[] args) {
-    PortManage portManage = new PortManage();
-    UDPServer udpServer = new UDPServer(portManage.getUdpPort());
-    udpServer.recieve();
-    int udpPort = portManage.getUdpPort();
+
+    Config.loadPortManage();
+    P2PHandler p2pHandler = new P2PHandler();
     try {
       Thread.sleep(3000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    Command commands = new Command(portManage, udpServer);
-//    udpServer.send();
+    Command commands = new Command(p2pHandler);
 
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
@@ -39,12 +32,11 @@ public class p2p {
 
   public static class Command {
 
-    private UDPServer discover;
-    private PortManage portManage;
+    private Config config;
+    private P2PHandler p2pHandler;
 
-    public Command(PortManage portManage, UDPServer discover) {
-      this.discover = discover;
-      this.portManage = portManage;
+    public Command(P2PHandler p2PHandler) {
+      this.p2pHandler = p2PHandler;
     }
 
     void Parse(String args) {
@@ -53,30 +45,24 @@ public class p2p {
         case "":
           return;
         case "connect":
-          break;
-        case "send":
-          try {
-            UDPSend(params[1]);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+          Connect(params[1], params[2]);
           break;
         case "exit":
-          discover.close();
+          this.p2pHandler.Close();
           System.exit(0);
       }
     }
 
-    void UDPSend(String ip) throws IOException {
-      String hostname = HostName.get();
-      InetAddress v = InetAddress.getByName(hostname);
-      System.out.println(hostname);
-      System.out.println(v.getHostAddress());
-      DiscoverMsg msg = new DiscoverMsg(MSG_TYPE.PI, v.getHostAddress(),
-          this.portManage.getUdpPort());
-      UDPPacket here = new UDPPacket(msg.toString().getBytes(), InetAddress.getByName(ip),
-          portManage.getUdpPort());
-      discover.send(here);
+
+    // connect and broadcast information
+    void Connect(String ip, String port) {
+      try {
+        // start to listen udp
+        this.p2pHandler.Connect(ip, Integer.parseInt(port));
+        this.p2pHandler.Broadcast();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 

@@ -48,7 +48,7 @@ public class TCPServer implements Runnable {
   }
 
   /*
-  listen incoming packet
+  listen incoming data
    */
   private void listen() {
     recieve = new Thread() {
@@ -75,7 +75,6 @@ public class TCPServer implements Runnable {
 
   public void connect(InetAddress host, int port) throws IOException {
     Socket socket = new Socket();
-    socket.bind(this.welcomeServer.getLocalSocketAddress());
     socket.connect(new InetSocketAddress(host, port));
     TCPSocketHandler handler = new TCPSocketHandler(socket);
     clients.add(handler);

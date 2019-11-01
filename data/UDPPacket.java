@@ -1,4 +1,4 @@
-package packet;
+package data;
 
 import java.net.InetAddress;
 
@@ -9,16 +9,16 @@ public class UDPPacket {
   private int port;
 
   /**
-   * Create a new packet
+   * Create a new data
    *
-   * @param data The packet to send
+   * @param data The data to send
    */
   public UDPPacket(byte[] data) {
     this.data = data;
   }
 
   /**
-   * Create a new packet with simple information about the client
+   * Create a new data with simple information about the client
    *
    * @param data
    * @param ip
@@ -32,9 +32,9 @@ public class UDPPacket {
   }
 
   /**
-   * Get the packet packet
+   * Get the data data
    *
-   * @return the packet packet
+   * @return the data data
    */
   public byte[] getData() {
     return data;

@@ -1,4 +1,4 @@
-package packet;
+package data;
 
 import java.net.InetAddress;
 
