@@ -191,6 +191,9 @@ public class TCPSocketHandler implements Runnable {
 //              e.printStackTrace();
               TCPSocketHandler.this.running = false;
               TCPSocketHandler.this.close();
+              ControlSocketCollection
+                  .remove(TCPSocketHandler.this.getRemoteAddress().getHostAddress());
+              Peers.RemovePeer(TCPSocketHandler.this.getRemoteAddress().getHostAddress());
               System.out.println(
                   "Timeout, The remote socket disappear " + TCPSocketHandler.this.getRemoteAddress()
                       .getHostAddress() + ", close socket with it");
