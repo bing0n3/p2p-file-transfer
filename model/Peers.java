@@ -123,11 +123,12 @@ public class Peers {
     Peer first = Peers.getInitialPeer();
     res.add(first);
     for (Peer p : Peers.getTCPPeers()) {
-      if (ControlSocketCollection.ContainsSocketHandler(p.getIp().getHostAddress()) || first.getIp()
+      if (!ControlSocketCollection.ContainsSocketHandler(p.getIp().getHostAddress()) && !first
+          .getIp()
           .equals(p.getIp())) {
-        continue;
+        res.add(p);
+        break;
       }
-      res.add(p);
     }
     return res;
   }

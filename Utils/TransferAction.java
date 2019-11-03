@@ -16,17 +16,19 @@ public class TransferAction implements ObjectAction {
     TransferMsg msg = TransferMsg.ParseMsg(str);
 
     if (msg.getType().equals(TRANS_TYPE.T)) {
+      System.out.println("Received: " + msg.toString());
       System.out.println("Received Request message for file: " + msg.getStr() + " From " + handler
           .getRemoteAddress().getHostAddress());
+      System.out.println("Transfer File.......");
       // start a socket and request
       if (Config.isContainFile(msg.getStr())) {
         byte[] fileContent;
-        File file = new File(Config.filePath + msg.getStr());
+        File file = new File(Config.SharedfilePath + msg.getStr());
         try {
           fileContent = Files.readAllBytes(file.toPath());
           handler.send(new String(fileContent));
         } catch (IOException e) {
-          e.printStackTrace();
+
         }
       }
     }

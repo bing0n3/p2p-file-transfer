@@ -84,16 +84,23 @@ public class TCPServer implements Runnable {
     }
   }
 
-  public TCPSocketHandler connect(InetAddress host, int port) throws IOException {
-    Socket socket = new Socket();
-    System.out.println("Connect with " + host.getHostAddress() + ":" + port);
-    socket.connect(new InetSocketAddress(host, port));
-    TCPSocketHandler handler = new TCPSocketHandler(socket, action);
-    handler.startHeartBeat();
-    if (action.getClass().equals(QueryAction.class)) {
-      ControlSocketCollection.put(socket.getInetAddress().getHostAddress(), handler);
+  public TCPSocketHandler connect(InetAddress host, int port) {
+    try {
+      Socket socket = new Socket();
+      System.out.println("Attempt to connect " + host.getHostAddress() + ":" + port);
+      socket.connect(new InetSocketAddress(host, port));
+      TCPSocketHandler handler = new TCPSocketHandler(socket, action);
+      handler.startHeartBeat();
+      if (action.getClass().equals(QueryAction.class)) {
+        System.out.println("Successful, Connect with " + host.getHostAddress() + ":" + port);
+        ControlSocketCollection.put(socket.getInetAddress().getHostAddress(), handler);
+      }
+      return handler;
+    } catch (IOException e) {
+      System.out.println("Connect Failed");
     }
-    return handler;
+
+    return null;
   }
 
 

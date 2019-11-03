@@ -98,10 +98,16 @@ public class TCPSocketHandler implements Runnable {
 
             if (action.getClass().equals(TransferAction.class)) {
               close();
-              System.out.println("Close File Transfer Socket!");
+              System.out.println("Sucessful Transfer file, and Close File Transfer Socket!");
             }
           } catch (IOException e) {
-            e.printStackTrace();
+            if (action.getClass().equals(TransferAction.class)) {
+              close();
+              System.out.println("File Transfer failed");
+            } else {
+              close();
+              e.printStackTrace();
+            }
           }
         }
       }

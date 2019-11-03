@@ -14,7 +14,7 @@ public class QueryAction implements ObjectAction {
     String str = (String) obj;
     try {
       QueryMsg msg = QueryMsg.ParseMsg(str);
-
+      System.out.println("\nReceived:" + msg.toString());
       // prevent broadcast storm
       // if received before, do nothing
       if (MsgCollection.ContainsMsg(msg.toString())) {
@@ -24,26 +24,27 @@ public class QueryAction implements ObjectAction {
         MsgCollection.putReceivedMsg(msg.toString());
       }
 
-      System.out.println("\nReceived:" + msg.toString());
-
       if (msg.getType().equals(QUERY_MSG_TYPE.Q)) {
         if (Config.isContainFile(msg.getFileName())) {
           //find file response
+          System.out.println("The file " + msg.getFileName() + " existed in server");
           QueryMsg response = new QueryMsg(QUERY_MSG_TYPE.R, msg.getID(),
               Config.getLocalAddress().getHostName(),
               Config.getFilePort(),
               msg.getFileName());
           handler
               .send(response.toString());
-          System.out.println("\nSend Message: " + response.toString());
+          System.out.println("Send Message: " + response.toString());
         } else {
           // local don't have it, forward the message
           ForwardMap.Put(msg.getID(), handler.getRemoteAddress().getHostAddress());
+          System.out.println("BroadCase query message to neighborrs");
           broadcast(msg.toString(), handler);
         }
       } else if (msg.getType().equals(QUERY_MSG_TYPE.R)) {
         // this server request file at first
         if (QueryFileCollection.contains(msg.getID())) {
+          System.out.println("Filed found in " + msg.getIP() + "!");
           // create a direct p2p file transfer
           InetAddress ip = InetAddress.getByName(msg.getIP());
           // find the file, mark the filefound
@@ -55,7 +56,7 @@ public class QueryAction implements ObjectAction {
           TCPSocketHandler backSocket = ControlSocketCollection.GetSocketHandlerByIP(ip);
           // send back
           backSocket.send(msg.toString());
-          System.out.println("\nSend Message: " + msg);
+          System.out.println("Backward: " + msg + " to " + ip);
         }
       }
     } catch (IOException e) {
@@ -67,7 +68,7 @@ public class QueryAction implements ObjectAction {
     for (TCPSocketHandler t : ControlSocketCollection.getSocketHandlers()) {
       if (t != handler) {
         t.send(msg);
-        System.out.println("\nSend Message: " + msg);
+        System.out.println("Send Message: " + msg);
       }
     }
   }

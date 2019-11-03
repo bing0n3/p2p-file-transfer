@@ -10,9 +10,10 @@ import java.util.List;
 
 public class Config {
 
-  public static int receiveTimeDelay = 3000;
-  public static int keepAliveDelay = 500;
-  public static String filePath = "shared/";
+  public static int receiveTimeDelay = 5000;
+  public static int keepAliveDelay = 300;
+  public static String SharedfilePath = "shared/";
+  public static String transPath = "./";
   private static String peer_config = "config_peer.txt";
   private static String host_config = "host.txt";
   private static String sharing_config = "config_sharing.txt";

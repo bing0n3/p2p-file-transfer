@@ -79,11 +79,11 @@ public class P2PHandler {
     fileServer.close();
     System.exit(0);
   }
-
-  public void ConnectTCP(String ip, int port) throws IOException {
-    Peer peer = new Peer(ip, port);
-    tcpServer.connect(peer.getIp(), peer.getUdpPort());
-  }
+//
+//  public void ConnectTCP(String ip, int port) throws IOException {
+//    Peer peer = new Peer(ip, port);
+//    tcpServer.connect(peer.getIp(), peer.getUdpPort());
+//  }
 
   // broadcast udp information to initialed connected
   public void Broadcast() throws IOException {
@@ -153,20 +153,22 @@ public class P2PHandler {
           bos.write(buffData);
           bos.flush();
 
+          System.out.println("Request File: " + msg.toString() + " to " + ip.getHostAddress());
+
           String content = null;
           InputStream in = socket.getInputStream();
           if (in != null) {
             content = readFromStream(in);
           }
 
-          File target = new File(Config.filePath + filename);
+          File target = new File(Config.transPath + filename);
           if (target.exists()) {
-            System.out.println("File " + filename + " existed");
+            System.out.println("File " + filename + " existed in local");
             return;
           } else {
             target.createNewFile();
           }
-          OutputStream os = new FileOutputStream(Config.filePath + filename);
+          OutputStream os = new FileOutputStream(target);
           if (content != null) {
             os.write(content.getBytes());
           }
