@@ -46,6 +46,7 @@ public class P2PHandler {
     fileServer.Listen();
   }
 
+  // broadcast udp discover msg and connect with two tcp connection
   public void Connect(String ip, int port) throws IOException, InterruptedException {
     Peers.setInitialPeer(new Peer(ip, port));
     Peers.addPeer(Peers.getInitialPeer());
@@ -94,28 +95,38 @@ public class P2PHandler {
   }
 
   public void ConnectToTwoNeighboor() throws IOException {
+    /*pick two neighbors from saved peers.
+    and make sure one server comes from input(command <ip> <port>) to avoid isolated network
+     */
     List<Peer> peers = Peers.getTwoPeers();
     for (Peer p : peers) {
       tcpServer.connect(p.getIp(), p.getControlPort());
     }
   }
 
+  /*
+  query target file in the network
+   */
   public void QueryFile(final String filename) {
     if (Config.isContainFile(filename)) {
       System.out.println("The file " + filename + " is in the local");
       return;
     }
 
+    // encapsulate message file to QueryMsg type
     String msg = QueryMsg.buildQueryMsg(filename).toString();
     System.out.println("Broadcast Query Message to Neighbors for " + filename);
     for (TCPSocketHandler handler : ControlSocketCollection.getSocketHandlers()) {
       handler.send(msg);
     }
+
+    // start a timer thread, if we not found file
     new Thread() {
       @Override
       public void run() {
         try {
           Thread.sleep(5000);
+          // use a static class to notify thread
           if (!FileFound.fileFound.contains(filename)) {
             System.out.println("The file " + filename + " doesn't exist in the network");
           }
@@ -139,7 +150,9 @@ public class P2PHandler {
     udpServer.close();
   }
 
-
+  /* request file by address, port and file name
+     send "T:<>" to get file from the server
+   */
   public static void requestForFile(final InetAddress ip, final int port, final String filename) {
     new Thread("file_request") {
       @Override

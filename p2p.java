@@ -32,6 +32,7 @@ public class p2p {
 
   }
 
+  // handle command input
   public static class Command {
 
     private P2PHandler p2pHandler;

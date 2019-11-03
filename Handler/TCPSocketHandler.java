@@ -101,6 +101,7 @@ public class TCPSocketHandler implements Runnable {
               System.out.println("Sucessful Transfer file, and Close File Transfer Socket!");
             }
           } catch (IOException e) {
+            // to distinguish  Control Server and File Server
             if (action.getClass().equals(TransferAction.class)) {
               close();
               System.out.println("File Transfer failed");

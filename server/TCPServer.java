@@ -29,7 +29,7 @@ public class TCPServer implements Runnable {
       this.init();
     } catch (SocketException e) {
       e.printStackTrace();
-      System.out.println("Fail to establish TCP connection");
+      System.out.println("Fail to establish TCP Server");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -107,7 +107,11 @@ public class TCPServer implements Runnable {
   @Override
   public void run() {
     this.running = true;
-    System.out.println("TCP Server started at port " + this.port);
+    if (action.getClass().equals(QueryAction.class)) {
+      System.out.println("TCP File Query Server start at port " + this.port);
+    } else {
+      System.out.println("TCP Transfer Server start at port " + this.port);
+    }
   }
 
 }
