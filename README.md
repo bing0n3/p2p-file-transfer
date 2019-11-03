@@ -1,5 +1,32 @@
 # p2p-file-transfer
 
+## How to Run 
+
+```java
+java p2p
+```
+
+Connect 
+
+```
+p2p> connect <ip> <port>
+```
+
+Get 
+
+```
+p2p> get <filename>
+```
+
+Leave
+```
+p2p> leave
+```
+
+Exit
+```
+p2p> Exit
+```
 
 ## Handle Duplicate Intermediate query message
 
