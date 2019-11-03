@@ -46,7 +46,11 @@ public class p2p {
         case "":
           return;
         case "connect":
-          Connect(params[1], params[2]);
+          if (params.length != 3) {
+            System.out.println("ileane input");
+          } else {
+            Connect(params[1], params[2]);
+          }
           break;
         case "get":
           Get(params[1]);
