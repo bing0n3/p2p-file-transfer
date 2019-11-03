@@ -6,8 +6,10 @@ import static Utils.NetworkUtils.readFromStream;
 import Utils.Config;
 import Utils.ControlSocketCollection;
 import Utils.FileFound;
+import Utils.MsgCollection;
 import Utils.NetworkUtils;
 import Utils.QueryAction;
+import Utils.QueryFileCollection;
 import Utils.TransferAction;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -64,6 +66,9 @@ public class P2PHandler {
     System.out.println("Leave All Neighbors");
     Peers.RemoveAll();
     ControlSocketCollection.removeAll();
+    MsgCollection.empty();
+    FileFound.Empy();
+    QueryFileCollection.empty();
     return;
   }
 

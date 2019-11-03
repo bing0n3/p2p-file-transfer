@@ -21,5 +21,10 @@ public class QueryFileCollection {
     return fileMapper.get(uuid);
   }
 
+  public static void empty() {
+    fileMapper = Collections
+        .synchronizedMap(new HashMap<String, String>());
+  }
+
 }
 

@@ -16,5 +16,7 @@ public class MsgCollection {
     return receivedMsg.add(msg);
   }
 
-
+  public static void empty() {
+    receivedMsg = Collections.synchronizedSet(new HashSet<String>());
+  }
 }
