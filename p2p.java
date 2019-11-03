@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 public class p2p {
 
-  private static boolean running;
+  private static boolean running = true;
 
   public static void main(String[] args) {
 
@@ -34,7 +34,6 @@ public class p2p {
 
   public static class Command {
 
-    private Config config;
     private P2PHandler p2pHandler;
 
     public Command(P2PHandler p2PHandler) {
@@ -49,12 +48,14 @@ public class p2p {
         case "connect":
           Connect(params[1], params[2]);
           break;
-        case "help":
-
+        case "get":
+          Get(params[1]);
+          break;
+        case "leave":
+          Left();
           break;
         case "exit":
-          p2p.running = false;
-          this.p2pHandler.Close();
+          Exit();
       }
     }
 
@@ -64,12 +65,22 @@ public class p2p {
       try {
         // start to listen udp
         this.p2pHandler.Connect(ip, Integer.parseInt(port));
-        this.p2pHandler.Broadcast();
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
         e.printStackTrace();
       }
     }
+
+    void Get(String filename) {
+      this.p2pHandler.QueryFile(filename);
+    }
+
+    void Left() {
+      this.p2pHandler.Leave();
+    }
+
+    void Exit() {
+      running = false;
+      this.p2pHandler.Exit();
+    }
   }
-
-
 }

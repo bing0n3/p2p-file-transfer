@@ -88,6 +88,7 @@ public class UDPServer implements Runnable {
   public void close() {
     this.running = false;
     this.socket.close();
+    System.out.println("\nTerminate Neighbor Discover Server!");
   }
 
 
@@ -108,7 +109,7 @@ public class UDPServer implements Runnable {
           server.socket.receive(dgpkt);
           process(dgpkt);
         } catch (IOException e) {
-          e.printStackTrace();
+//          e.printStackTrace();
         }
 
       }
@@ -152,6 +153,8 @@ public class UDPServer implements Runnable {
           server.send(
               new UDPPacket(pong.toString().getBytes(), InetAddress.getByName(recvMsg.getIP()),
                   recvMsg.getPort()));
+        } else {
+          System.out.println("Ignore Duplicate Discover message: " + recvMsg.toString());
         }
       } else {
         System.out.println("Received: illegal msg");

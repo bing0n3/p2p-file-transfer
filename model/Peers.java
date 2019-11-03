@@ -1,15 +1,31 @@
 package model;
 
+import Utils.ControlSocketCollection;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Peers {
 
+  private static Peer initialPeer = null;
   private static Map<String, model.Peer> peers = Collections
       .synchronizedMap(new HashMap<String, Peer>());
+
+
+  public static Peer getInitialPeer() {
+    return initialPeer;
+  }
+
+  public static void setPeers(Map<String, Peer> peers) {
+    Peers.peers = peers;
+  }
+
+  public static void setInitialPeer(Peer initialPeer) {
+    Peers.initialPeer = initialPeer;
+  }
 
   public static void addPeer(InetAddress ip, int port) {
     if (peers.containsKey(ip.getHostAddress())) {
@@ -52,10 +68,21 @@ public class Peers {
     return peers.get(ip);
   }
 
+  public static void RemovePeer(String ip) {
+    peers.remove(ip);
+  }
+
+  public static void RemoveAll() {
+    initialPeer = null;
+    peers = Collections
+        .synchronizedMap(new HashMap<String, Peer>());
+  }
+
   public static ArrayList<Peer> getPeers() {
     return new ArrayList<>(peers.values());
   }
 
+  // return neighbor have udp discover port
   public static ArrayList<Peer> getUDPPeers() {
     ArrayList<Peer> res = new ArrayList<>();
     for (Map.Entry entry : peers.entrySet()) {
@@ -68,6 +95,7 @@ public class Peers {
     return res;
   }
 
+  // return neighbor have tcp control port
   public static ArrayList<Peer> getTCPPeers() {
     ArrayList<Peer> res = new ArrayList<>();
     for (Map.Entry entry : peers.entrySet()) {
@@ -86,6 +114,22 @@ public class Peers {
 
   public static boolean Contains(String ip) {
     return peers.containsKey(ip);
+  }
+
+
+  public static List<Peer> getTwoPeers() {
+    // connect the given ip at first to ensure be a network
+    List<Peer> res = new ArrayList<>();
+    Peer first = Peers.getInitialPeer();
+    res.add(first);
+    for (Peer p : Peers.getTCPPeers()) {
+      if (ControlSocketCollection.ContainsSocketHandler(p.getIp().getHostAddress()) || first.getIp()
+          .equals(p.getIp())) {
+        continue;
+      }
+      res.add(p);
+    }
+    return res;
   }
 
 }
